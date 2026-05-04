@@ -117,9 +117,6 @@ class MovieLibrary:
         self.tree.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
-        ttk.Button(self.root, text="Удалить выбранное", command=self.delete_selected).grid(
-            row=3, column=0, pady=4)
-
     # ── Summary ──────────────────────────────────────────────────────────────
 
     def _build_summary_frame(self):
@@ -258,38 +255,6 @@ class MovieLibrary:
             self.avg_var.set(f"{total_rating / len(filtered):.1f}")
         else:
             self.avg_var.set("0.0")
-
-    def reset_filters(self):
-        self.filter_genre_var.set("Все")
-        self.filter_year_from_var.set("")
-        self.filter_year_to_var.set("")
-        self.refresh_table()
-
-    def delete_selected(self):
-        selected = self.tree.selection()
-        if not selected:
-            messagebox.showinfo("Удаление", "Выберите строку для удаления.")
-            return
-
-        filtered = self.get_filtered()
-        if filtered is None:
-            return
-
-        # Build mapping of displayed rows to actual movies
-        indices_to_delete = set()
-        for item in selected:
-            row_num = int(self.tree.item(item, "values")[0]) - 1
-            if 0 <= row_num < len(filtered):
-                movie = filtered[row_num]
-                # Find actual index in self.movies
-                for idx, m in enumerate(self.movies):
-                    if m is movie:
-                        indices_to_delete.add(idx)
-                        break
-
-        self.movies = [m for i, m in enumerate(self.movies) if i not in indices_to_delete]
-        save_movies(self.movies)
-        self.refresh_table()
 
 
 def main():
